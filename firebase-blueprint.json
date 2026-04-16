@@ -1,0 +1,84 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User profile with role-specific metadata.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["student", "parent", "admin"] },
+        "school": { "type": "string", "description": "School name (for students)" },
+        "graduationYear": { "type": "string" },
+        "interests": { "type": "array", "description": "Major interests or industries" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Event": {
+      "title": "College Expo Event",
+      "description": "Details about a specific expo event.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "city": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "time": { "type": "string" },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "mapUrl": { "type": "string", "description": "URL to the booth map image" }
+      },
+      "required": ["name", "date", "location"]
+    },
+    "Seminar": {
+      "title": "Workshop/Seminar",
+      "description": "Session within an expo event.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "eventId": { "type": "string" },
+        "title": { "type": "string" },
+        "speaker": { "type": "string" },
+        "time": { "type": "string" },
+        "room": { "type": "string" },
+        "category": { "type": "string" }
+      },
+      "required": ["eventId", "title", "time"]
+    },
+    "Notification": {
+      "title": "App Notification",
+      "description": "System or admin-sent notification to a user.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "type": { "type": "string", "enum": ["alert", "update", "reminder"] },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "message"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Stores user profiles."
+    },
+    "/events/{eventId}": {
+      "schema": "Event",
+      "description": "Stores expo events."
+    },
+    "/events/{eventId}/seminars/{seminarId}": {
+      "schema": "Seminar",
+      "description": "Stores seminars for a specific event."
+    },
+    "/users/{userId}/notifications/{notifId}": {
+      "schema": "Notification",
+      "description": "Stores user-specific notifications."
+    }
+  }
+}

@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "Courier New", Courier, monospace;
+}
+
+:root {
+  --bg: #F0F2F5;
+  --sidebar-bg: #1A2233;
+  --card-bg: #FFFFFF;
+  --accent: #D32F2F;
+  --secondary: #1976D2;
+  --text-main: #1C1E21;
+  --text-muted: #606770;
+  --border: #E4E6EB;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+}
+
+.high-density-sidebar {
+  background: var(--sidebar-bg);
+  color: white;
+}
+
+.high-density-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.high-density-header {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.high-density-accent {
+  color: var(--accent);
+}
+
+.high-density-secondary {
+  color: var(--secondary);
+}
+
+.high-density-text-muted {
+  color: var(--text-muted);
+}
