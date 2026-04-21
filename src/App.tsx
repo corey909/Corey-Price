@@ -107,6 +107,7 @@ interface AppUser {
   displayName: string;
   role: Role;
   school?: string;
+  major?: string;
   graduationYear?: string;
   interests?: string[];
   savedEvents?: string[];
@@ -1105,6 +1106,8 @@ const EventDetails = ({ event, onBack, onEdit }: { event: ExpoEvent, onBack: () 
 const ProfileSettings = ({ user, onUpdate }: { user: AppUser, onUpdate: (data: Partial<AppUser>) => Promise<void> }) => {
   const [displayName, setDisplayName] = useState(user.displayName);
   const [school, setSchool] = useState(user.school || '');
+  const [major, setMajor] = useState(user.major || '');
+  const [graduationYear, setGraduationYear] = useState(user.graduationYear || '');
   const [interestInput, setInterestInput] = useState('');
   const [interests, setInterests] = useState<string[]>(user.interests || []);
   const [saving, setSaving] = useState(false);
@@ -1125,7 +1128,13 @@ const ProfileSettings = ({ user, onUpdate }: { user: AppUser, onUpdate: (data: P
 
   const handleSave = async () => {
     setSaving(true);
-    await onUpdate({ displayName, school, interests });
+    await onUpdate({ 
+      displayName, 
+      school, 
+      major: user.role === 'student' ? major : undefined,
+      graduationYear: user.role === 'student' ? graduationYear : undefined,
+      interests 
+    });
     setSaving(false);
     alert('Profile updated successfully!');
   };
@@ -1166,6 +1175,31 @@ const ProfileSettings = ({ user, onUpdate }: { user: AppUser, onUpdate: (data: P
               placeholder={user.role === 'student' ? "High School or College Name" : "Organization Name"}
             />
           </div>
+
+          {user.role === 'student' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[11px] font-bold uppercase text-[#606770] mb-1.5">Intended Major</label>
+                <input 
+                  type="text" 
+                  value={major}
+                  onChange={(e) => setMajor(e.target.value)}
+                  className="w-full bg-[#F0F2F5] border border-[#E4E6EB] rounded px-4 py-2 text-[14px] outline-none focus:border-[#1976D2]"
+                  placeholder="e.g. Computer Science"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold uppercase text-[#606770] mb-1.5">Expected Graduation Year</label>
+                <input 
+                  type="text" 
+                  value={graduationYear}
+                  onChange={(e) => setGraduationYear(e.target.value)}
+                  className="w-full bg-[#F0F2F5] border border-[#E4E6EB] rounded px-4 py-2 text-[14px] outline-none focus:border-[#1976D2]"
+                  placeholder="e.g. 2026"
+                />
+              </div>
+            </div>
+          )}
 
           <div>
             <label className="block text-[11px] font-bold uppercase text-[#606770] mb-1.5">Areas of Interest</label>
@@ -2132,7 +2166,7 @@ const ProfileCompletionPrompt = ({ onGoToSettings }: { onGoToSettings: () => voi
         </div>
         <div>
           <h4 className="font-bold text-[15px]">Complete Your Student Profile</h4>
-          <p className="text-[12px] opacity-90">Please add your school and interests to unlock personalized scholarship recommendations.</p>
+          <p className="text-[12px] opacity-90">Please add your school, major, and graduation year to unlock personalized recommendations.</p>
         </div>
       </div>
       <button 
@@ -3208,7 +3242,12 @@ export default function App() {
     }
   };
 
-  const isProfileIncomplete = user && (user.role === 'student' || user.role === 'parent') && (!user.school || !user.interests || user.interests.length === 0);
+  const isProfileIncomplete = user && (user.role === 'student' || user.role === 'parent') && (
+    !user.school || 
+    !user.interests || 
+    user.interests.length === 0 || 
+    (user.role === 'student' && (!user.major || !user.graduationYear))
+  );
 
   if (loading) return <LoadingScreen />;
 
