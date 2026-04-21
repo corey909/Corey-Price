@@ -61,6 +61,20 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "title", "message"]
+    },
+    "Feedback": {
+      "title": "Event Feedback",
+      "description": "User ratings and comments for an expo event.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "rating": { "type": "number", "minimum": 1, "maximum": 5 },
+        "comment": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "rating", "createdAt"]
     }
   },
   "firestore": {
@@ -75,6 +89,10 @@
     "/events/{eventId}/seminars/{seminarId}": {
       "schema": "Seminar",
       "description": "Stores seminars for a specific event."
+    },
+    "/events/{eventId}/feedback/{feedbackId}": {
+      "schema": "Feedback",
+      "description": "Stores user feedback for a specific event."
     },
     "/users/{userId}/notifications/{notifId}": {
       "schema": "Notification",
