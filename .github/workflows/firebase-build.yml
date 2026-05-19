@@ -1,0 +1,38 @@
+name: Build for Firebase Test Lab
+
+on: 
+  push:
+    branches: [ main, master ] # Runs automatically when you push code
+  workflow_dispatch: # Allows you to trigger it manually with a button
+
+jobs:
+  build:
+    runs-on: macos-14 # Uses a GitHub hosted Mac with Xcode installed
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app # Selects a stable iOS SDK
+
+      - name: Build For Testing
+        run: |
+          xcodebuild build-for-testing \
+            -project "Corey Price.xcodeproj" \
+            -scheme "Corey Price" \
+            -derivedDataPath ./outputFolder \
+            -sdk iphoneos \
+            -configuration Debug
+
+      - name: Structure and Zip the Output
+        run: |
+          # Change directory into where Xcode placed the compiled files
+          cd outputFolder/Build/Products/Debug-iphoneos
+          # Zip the contents from the inside so there is no parent folder
+          zip -r ../../../firebase_tests.zip . -i "*.app" "*.xctestrun"
+
+      - name: Upload Zip Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firebase-test-package
+          path: firebase_tests.zip
